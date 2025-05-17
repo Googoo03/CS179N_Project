@@ -59,11 +59,8 @@ public class Player : MonoBehaviour
     [Header("Hand Settings")]
     [SerializeField] private Vector3 handOffset = Vector3.zero;
     [SerializeField] private float handRadius = 3.5f;
-    [SerializeField] private float handFlip = 0f;
-    [SerializeField] private int weaponLayerFront = 5;
-    [SerializeField] private int weaponLayerBack = 1;
-    [SerializeField] private float handLayerFront = 6;
-    [SerializeField] private float handLayerBack = 2;
+    [SerializeField] private int handLayerFront = 4;
+    [SerializeField] private int handLayerBack = 2;
 
     //Camera Parameters
     [Header("Camera Settings")]
@@ -100,7 +97,7 @@ void Awake()
         if (_equipped != null)
             _weaponScript = _equipped.GetComponent<Weapon>();
 
-        sprint_bar.maxValue = 100f;
+        if(sprint_bar != null) sprint_bar.maxValue = 100f;
 
     }
 
@@ -125,12 +122,17 @@ void Awake()
 
         if (sprint_amount < 100)
         {
-            sprint_bar.gameObject.SetActive(true);
-            sprint_bar.value = sprint_amount;
+            if (sprint_amount < 100)
+            {
+                sprint_bar.gameObject.SetActive(true);
+                sprint_bar.value = sprint_amount;
+            }
+            else
+            {
+                sprint_bar.gameObject.SetActive(false);
+            }
         }
-        else {
-            sprint_bar.gameObject.SetActive(false);
-        }
+
 
         //STATE ACTIONS & TRANSITIONS FOR THE ACTION STATE
         switch (action_state)
@@ -433,7 +435,7 @@ void Awake()
 
 
         //Apply movement
-        _rb.linearVelocity = new Vector2(horizontal_multiplier,vertical_multiplier)*current_speed;
+        if(_rb != null) _rb.linearVelocity = new Vector2(horizontal_multiplier,vertical_multiplier)*current_speed;
     }
 
     private void SelectEquipped() {
@@ -450,7 +452,7 @@ void Awake()
         if (_equipped == null && selectedPrefab != null)
         {
             _equipped = Instantiate(selectedPrefab);
-            _equipped.transform.SetParent(transform, false);
+`            _equipped.transform.SetParent(transform, false);
             _equipped.transform.localPosition = Vector3.zero;
             _equipped.transform.localRotation = Quaternion.identity;
 
@@ -529,9 +531,9 @@ void Awake()
         _handSR = _hand.GetComponent<SpriteRenderer>();
         if (dir.y > 0)
         {
-            _handSR.sortingOrder = 2;
+            _handSR.sortingOrder = handLayerBack;
         }
-        else _handSR.sortingOrder = 4;
+        else _handSR.sortingOrder = handLayerFront;
 
         if(_equipped) _equipped.transform.localPosition = (Vector3)dir * handRadius + handOffset;
         _hand.transform.localPosition = (Vector3)dir * handRadius + handOffset;
