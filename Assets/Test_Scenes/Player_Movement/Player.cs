@@ -452,7 +452,7 @@ void Awake()
         if (_equipped == null && selectedPrefab != null)
         {
             _equipped = Instantiate(selectedPrefab);
-`            _equipped.transform.SetParent(transform, false);
+            _equipped.transform.SetParent(transform, false);
             _equipped.transform.localPosition = Vector3.zero;
             _equipped.transform.localRotation = Quaternion.identity;
 
